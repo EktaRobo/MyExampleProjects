@@ -1,93 +1,81 @@
 package com.example.ekta.recyclersearchview;
 
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AppCompatActivity;
+import android.content.AsyncQueryHandler;
+import android.content.Context;
+import android.content.ContextWrapper;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
+import android.os.Handler;
+import android.os.ResultReceiver;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Filter;
 import android.widget.ProgressBar;
 
 import com.example.ekta.recyclersearchview.adapter.RecyclerAdapter;
-import com.example.ekta.recyclersearchview.model.UserResponse;
-import com.example.ekta.recyclersearchview.network.NetworkAdapter;
+import com.example.ekta.recyclersearchview.manager.NotificationListenerManager;
+import com.example.ekta.recyclersearchview.utils.FileUtils;
 
+import java.io.File;
 import java.util.ArrayList;
-import java.util.Comparator;
 
-import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, OnListFetchListener{
+public class MainActivity extends AppCompatActivity implements NotificationListenerManager
+        .Observer {
     private ProgressBar mProgressBar;
-    private ArrayList<UserResponse> mUserResponses;
     private RecyclerView mRecyclerView;
+    private DownloadImageService mBoundService;
+    private boolean mServiceBound;
     private RecyclerAdapter mAdapter;
-
-
-    private static final Comparator<UserResponse> ALPHABETICAL_COMPARATOR = new Comparator<UserResponse>() {
-        @Override
-        public int compare(UserResponse a, UserResponse b) {
-            return a.getId().compareTo(b.getId());
-        }
-    };
+    private ArrayList<Bitmap> mBitmaps = new ArrayList<>();
+    private Intent mDownloadImageIntent;
+    private static Handler sHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init();
+        NotificationListenerManager.getInstance().addObserver(Notification
+                .NOTIFY_BITMAP_DOWNLOAD, this);
     }
 
     private void init() {
+        // path to /data/data/yourapp/app_data/imageDir
+//        Bitmap bitmap = loadImageFromStorage(directory.getPath());
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
         mProgressBar.setVisibility(View.VISIBLE);
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        mAdapter = new RecyclerAdapter(ALPHABETICAL_COMPARATOR);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mAdapter = new RecyclerAdapter(mBitmaps);
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         mRecyclerView.setAdapter(mAdapter);
-        NetworkAdapter.getInstance().getUserData(this);
+        mDownloadImageIntent = new Intent(MainActivity.this, DownloadImageService
+                .class);
+
+        startService(mDownloadImageIntent);
+
     }
-
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu, menu);
-        MenuItem searchItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        searchView.setOnQueryTextListener(this);
-        return true;
-    }
-
-    @Override
-    public boolean onQueryTextChange(String query) {
-        mAdapter.getFilter().filter(query.toLowerCase(), new Filter.FilterListener() {
-            @Override
-            public void onFilterComplete(int i) {
-                mRecyclerView.scrollToPosition(0);
-
+    public void update(Notification notificationName, Bundle data) {
+        if (notificationName == Notification.NOTIFY_BITMAP_DOWNLOAD) {
+            if (data != null) {
+                int index = data.getInt(Constants.INDEX);
+                String imageName = Constants.END_POINTS.get(index);
+                if (imageName != null) {
+                    File directory = FileUtils.getStorageDir(MainActivity.this, FileUtils
+                            .StorageType.EXTERNAL_PRIVATE);
+                    Bitmap bitmap = FileUtils.loadImageFromStorage(directory.getPath(), imageName);
+                    mBitmaps.add(bitmap);
+                    mAdapter.notifyItemInserted(index);
+                    if (index == Constants.END_POINTS.size() - 1) {
+                        mProgressBar.setVisibility(View.GONE);
+                        stopService(mDownloadImageIntent);
+                    }
+                }
             }
-        });
-        return true;
-    }
-
-    @Override
-    public boolean onQueryTextSubmit(String query) {
-        return false;
-    }
-
-    @Override
-    public void onSuccess(Response<ArrayList<UserResponse>> response) {
-        mProgressBar.setVisibility(View.GONE);
-        mUserResponses = response.body();
-        mAdapter.add(mUserResponses);
-    }
-
-    @Override
-    public void onFailure(Throwable t) {
-        mProgressBar.setVisibility(View.GONE);
-
+        }
     }
 }
