@@ -5,5 +5,5 @@ package com.example.ekta.recyclersearchview;
  */
 
 public enum Notification {
-    NOTIFY_BITMAP_DOWNLOAD;
+    NOTIFY_BITMAP_DOWNLOAD
 }
