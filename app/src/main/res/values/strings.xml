@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">My Example Projects</string>
     <string name="action_search">Search</string>
+    <string name="picture_download">Picture Download</string>
+    <string name="download_in_progress">Download in progress</string>
+    <string name="download_complete">Download complete</string>
 </resources>

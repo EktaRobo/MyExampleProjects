@@ -1,11 +1,11 @@
-package com.example.ekta.recyclersearchview.viewholder;
+package com.example.ekta.myexampleprojects.viewholder;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.example.ekta.recyclersearchview.R;
+import com.example.ekta.myexampleprojects.R;
 
 /**
  * Created by ekta on 12/12/16.

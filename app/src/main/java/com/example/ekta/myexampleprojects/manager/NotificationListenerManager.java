@@ -1,8 +1,8 @@
-package com.example.ekta.recyclersearchview.manager;
+package com.example.ekta.myexampleprojects.manager;
 
 import android.os.Bundle;
 
-import com.example.ekta.recyclersearchview.Notification;
+import com.example.ekta.myexampleprojects.constant.Constants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,19 +10,10 @@ import java.util.Set;
 
 public class NotificationListenerManager {
 
-    public interface Observer {
-        public void update(Notification notificationName, Bundle data);
-    }
-
     private static NotificationListenerManager mNotifier = null;
-    private HashMap<Notification, ArrayList<Observer>> mObservablesMap = null;
-
+    private HashMap<Constants.NotificationEnum, ArrayList<Observer>> mObservablesMap = null;
     private NotificationListenerManager() {
-        mObservablesMap = new HashMap<Notification, ArrayList<Observer>>();
-    }
-
-    private static class NotificationManagerHolder {
-        public static final NotificationListenerManager mInstance = new NotificationListenerManager();
+        mObservablesMap = new HashMap<Constants.NotificationEnum, ArrayList<Observer>>();
     }
 
     /**
@@ -40,7 +31,7 @@ public class NotificationListenerManager {
      * @param notificationName
      * @param observer
      */
-    public void addObserver(Notification notificationName, Observer observer) {
+    public void addObserver(Constants.NotificationEnum notificationName, Observer observer) {
         if (observer == null) {
             throw new IllegalArgumentException("The observer is null.");
         }
@@ -70,7 +61,7 @@ public class NotificationListenerManager {
      * @param notificationName
      * @param observer
      */
-    public void removeObserver(Notification notificationName, Observer observer) {
+    public void removeObserver(Constants.NotificationEnum notificationName, Observer observer) {
         ArrayList<Observer> observerList = null;
         synchronized (mObservablesMap) {
             if (mObservablesMap.containsKey(notificationName)) {
@@ -96,8 +87,8 @@ public class NotificationListenerManager {
      */
     public void removeObserver(Observer observer) {
         synchronized (mObservablesMap) {
-            Set<Notification> keys = mObservablesMap.keySet();
-            for (Notification key : keys) {
+            Set<Constants.NotificationEnum> keys = mObservablesMap.keySet();
+            for (Constants.NotificationEnum key : keys) {
                 ArrayList<Observer> observers = mObservablesMap.get(key);
                 if (observers.contains(observer))
                     observers.remove(observer);
@@ -112,7 +103,7 @@ public class NotificationListenerManager {
      * @param notificationName
      * @param data
      */
-    public void notifyObservers(Notification notificationName, Bundle data) {
+    public void notifyObservers(Constants.NotificationEnum notificationName, Bundle data) {
         int size = 0;
         Observer[] observersToNotify = null;
         synchronized (mObservablesMap) {
@@ -131,6 +122,15 @@ public class NotificationListenerManager {
             }
         }
 
+    }
+
+    public interface Observer {
+        public void update(Constants.NotificationEnum notificationName, Bundle data);
+    }
+
+    private static class NotificationManagerHolder {
+        public static final NotificationListenerManager mInstance = new
+                NotificationListenerManager();
     }
 }
 

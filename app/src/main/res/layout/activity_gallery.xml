@@ -5,11 +5,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.ekta.recyclersearchview.MainActivity">
+    android:paddingLeft="4dp"
+    android:paddingRight="4dp"
+    tools:context="com.example.ekta.myexampleprojects.gallery.GalleryActivity">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+    <FrameLayout android:id="@+id/content_frame"
+                 android:layout_width="match_parent"
+                 android:layout_height="match_parent"/>
 
 </RelativeLayout>

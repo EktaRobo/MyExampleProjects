@@ -1,4 +1,4 @@
-package com.example.ekta.recyclersearchview.utils;
+package com.example.ekta.myexampleprojects.utils;
 
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -7,7 +7,7 @@ import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.util.Log;
 
-import com.example.ekta.recyclersearchview.R;
+import com.example.ekta.myexampleprojects.R;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -20,11 +20,24 @@ import java.io.IOException;
 
 public class FileUtils {
     private static final String TAG = FileUtils.class.getSimpleName();
+    private static FileUtils sInstance;
+    private Context mContext;
+
+    private FileUtils(Context context) {
+        mContext = context;
+    }
+
+    public static FileUtils getInstance(Context context) {
+        if (sInstance == null) {
+            sInstance = new FileUtils(context);
+        }
+        return sInstance;
+    }
+
 
     /**
      * This is used to store the images in device internal directory path.
      *
-     * @param context     Context for retrieving the storage directory
      * @param bitmap      The bitmap to be saved
      * @param filename    Name of the file
      * @param storageType StorageType value in terms of internal cache directory, internal private
@@ -32,8 +45,8 @@ public class FileUtils {
      * @param imageType   ImageType enum value.
      * @return boolean value indicating whether image saved or not.
      */
-    public static boolean saveImage(Context context, Bitmap bitmap,
-                                    String filename, StorageType storageType, ImageType imageType) {
+    public boolean saveImage(Bitmap bitmap,
+                             String filename, StorageType storageType, ImageType imageType) {
         if (!isExternalStorageWritable()) {
 
             return false;
@@ -41,7 +54,7 @@ public class FileUtils {
         try {
 
             filename = filename + ".jpg";
-            final File imageFile = new File(getStorageDir(context, storageType), filename);
+            File imageFile = new File(getStorageDir(storageType), filename);
             FileOutputStream stream = new FileOutputStream(imageFile);
             if (null != bitmap) {
                 bitmap.compress(getImageCompressFormat(imageType), 100, stream);
@@ -63,7 +76,7 @@ public class FileUtils {
 
     }
 
-    public static Bitmap loadImageFromStorage(String path, String imageName) {
+    public Bitmap loadImageFromStorage(String path, String imageName) {
 
         Bitmap bitmap = null;
 
@@ -77,7 +90,7 @@ public class FileUtils {
     /**
      * Checks if external storage is available for read and write
      */
-    public static boolean isExternalStorageWritable() {
+    public boolean isExternalStorageWritable() {
         if (Environment.MEDIA_MOUNTED.equals(
                 Environment.getExternalStorageState())) {
             return true;
@@ -85,7 +98,7 @@ public class FileUtils {
         return false;
     }
 
-    public static void deleteFile(File uri) {
+    public void deleteFile(File uri) {
         File fdelete = new File(uri.getPath());
         if (fdelete.exists()) {
             if (fdelete.delete()) {
@@ -99,44 +112,43 @@ public class FileUtils {
     /**
      * Used to save images in either internal or external storage directory specified by StorageType
      *
-     * @param context     Context
      * @param storageType Enum value specifying directory to save the image.
      * @return - the directory that holds the image to be saved.
      */
-    public static File getStorageDir(Context context, StorageType storageType) {
+    public File getStorageDir(StorageType storageType) {
         File file = null;
-        if (context == null) {
+        if (mContext == null) {
             return file;
         }
         switch (storageType) {
             case INTERNAL_CACHE:
                 // Files will be saved in path /data/data/<package>/cache/<app name>/
-                file = new File(context.getCacheDir(), context.getString(R.string.app_name));
+                file = new File(mContext.getCacheDir(), mContext.getString(R.string.app_name));
                 break;
             case INTERNAL_PRIVATE:
                 // Files will be saved in path /data/data/<package>/files/<app name>/
-                file = new File(context.getFilesDir(), context.getString(R.string.app_name));
+                file = new File(mContext.getFilesDir(), mContext.getString(R.string.app_name));
                 break;
             case EXTERNAL_PRIVATE:
                 // Files will be saved in path
                 // /sdcard/Android/data/<package>/files/pictures/<app name>/
-                file = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-                        context.getString(R.string.app_name));
+                file = new File(mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+                        mContext.getString(R.string.app_name));
                 break;
             case EXTERNAL_PRIVATE_TEMP:
                 // Files will be saved in path
                 // /sdcard/Android/data/<package>/files/pictures/<app name>/temp/
-                file = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-                        context.getString(R.string.app_name) + "/temp");
+                file = new File(mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+                        mContext.getString(R.string.app_name) + "/temp");
                 break;
             case EXTERNAL_PUBLIC:
                 // Files will be saved in path /sdcard/
                 file = new File(Environment.getExternalStorageDirectory(),
-                        context.getString(R.string.app_name));
+                        mContext.getString(R.string.app_name));
                 break;
             default:
                 new File(Environment.getExternalStorageDirectory(),
-                        context.getString(R.string.app_name));
+                        mContext.getString(R.string.app_name));
         }
         if (file != null && !file.exists() && !file.mkdirs()) {
             Log.d(TAG, "Directory not created");
@@ -144,7 +156,7 @@ public class FileUtils {
         return file;
     }
 
-    public static Bitmap.CompressFormat getImageCompressFormat(ImageType imageType) {
+    public Bitmap.CompressFormat getImageCompressFormat(ImageType imageType) {
         Bitmap.CompressFormat compressFormat = Bitmap.CompressFormat.JPEG;
         switch (imageType) {
             case TYPE_JPEG:
@@ -157,8 +169,8 @@ public class FileUtils {
         return compressFormat;
     }
 
-    private void saveToInternalStorage(Bitmap bitmapImage, Context context) {
-        ContextWrapper cw = new ContextWrapper(context);
+    private void saveToInternalStorage(Bitmap bitmapImage) {
+        ContextWrapper cw = new ContextWrapper(mContext);
 // path to /data/data/yourapp/app_data/imageDir
         File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
 // Create imageDir
