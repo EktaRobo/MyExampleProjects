@@ -1,7 +1,6 @@
 package com.example.ekta.myexampleprojects.gallery;
 
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -27,7 +26,6 @@ import java.util.Collections;
  */
 public class GalleryFragment extends Fragment implements NotificationListenerManager
         .Observer {
-    private final Context mContext = getActivity();
     private View mRootView;
     private RecyclerAdapter mAdapter;
     private ArrayList<Bitmap> mBitmaps = new ArrayList<>();
@@ -105,6 +103,13 @@ public class GalleryFragment extends Fragment implements NotificationListenerMan
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        NotificationListenerManager.getInstance().removeObserver(Constants.NotificationEnum
+                .NOTIFY_BITMAP_DOWNLOAD, this);
+    }
+
+    @Override
     public void update(Constants.NotificationEnum notificationName, Bundle data) {
         if (notificationName == Constants.NotificationEnum.NOTIFY_BITMAP_DOWNLOAD) {
             if (data != null) {
@@ -113,14 +118,6 @@ public class GalleryFragment extends Fragment implements NotificationListenerMan
                 mBitmaps.remove(index);
                 mBitmaps.add(index, bitmap);
                 mAdapter.notifyDataSetChanged();
-                /*if (index == Constants.END_POINTS.size() - 1) {
-                    mContext.stopService(mDownloadImageIntent);
-                    if (mBound) {
-                        mDownloadImageService.setPresenter(null); // unregister
-                        mContext.unbindService(mServiceConnection);
-                        mBound = false;
-                    }
-                }*/
             }
         }
     }
