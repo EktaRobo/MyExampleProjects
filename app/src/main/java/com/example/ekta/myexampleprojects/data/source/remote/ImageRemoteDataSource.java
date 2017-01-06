@@ -29,7 +29,7 @@ import java.util.concurrent.ExecutionException;
 import static com.example.ekta.myexampleprojects.utils.FileUtils.StorageType.EXTERNAL_PRIVATE;
 
 /**
- * Implementation of the data source that adds a latency simulating network.
+ * Implementation of the data source from network.
  */
 public class ImageRemoteDataSource implements ImageDataSource {
 
@@ -67,9 +67,7 @@ public class ImageRemoteDataSource implements ImageDataSource {
                     into(100, 100). // Width and height
                     get();
 
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
 

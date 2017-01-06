@@ -26,31 +26,31 @@ import java.io.File;
 
 
 /**
- * Concrete implementation of a data source as a db.
+ * Concrete implementation of a data source from file.
  */
 public class ImageLocalDataSource implements ImageDataSource {
 
     private static ImageLocalDataSource sInstance;
-    private static FileUtils sFileUtilInstance;
+    private FileUtils mFileUtilsInstance;
 
     // Prevent direct instantiation.
-    private ImageLocalDataSource() {
+    private ImageLocalDataSource(FileUtils fileUtilInstance) {
+        mFileUtilsInstance = fileUtilInstance;
     }
 
     public static ImageLocalDataSource getInstance(FileUtils fileUtilInstance) {
-        sFileUtilInstance = fileUtilInstance;
         if (sInstance == null) {
-            sInstance = new ImageLocalDataSource();
+            sInstance = new ImageLocalDataSource(fileUtilInstance);
         }
         return sInstance;
     }
 
     @Override
     public void getImage(LoadImageCallback loadImageCallback, int index) {
-        File directory = sFileUtilInstance.getStorageDir(FileUtils
+        File directory = mFileUtilsInstance.getStorageDir(FileUtils
                 .StorageType.EXTERNAL_PRIVATE);
         Bitmap bitmap;
-        bitmap = sFileUtilInstance.loadImageFromStorage(directory.getPath(), Constants.END_POINTS
+        bitmap = mFileUtilsInstance.loadImageFromStorage(directory.getPath(), Constants.END_POINTS
                 .get
                 (index));
         if (bitmap == null) {
