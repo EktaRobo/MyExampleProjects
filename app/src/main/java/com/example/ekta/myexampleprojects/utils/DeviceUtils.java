@@ -8,7 +8,6 @@ import android.util.DisplayMetrics;
  */
 
 public class DeviceUtils {
-
     /**
      * Returns device width
      *
@@ -19,9 +18,9 @@ public class DeviceUtils {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         return displayMetrics.widthPixels;
     }
-
     /**
      * Returns device height
+     *
      * @param context : context
      * @return : device height in int
      */
