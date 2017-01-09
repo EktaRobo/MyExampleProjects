@@ -28,21 +28,14 @@ import java.io.File;
 /**
  * Concrete implementation of a data source from file.
  */
+
 public class ImageLocalDataSource implements ImageDataSource {
 
     private static ImageLocalDataSource sInstance;
     private FileUtils mFileUtilsInstance;
 
-    // Prevent direct instantiation.
-    private ImageLocalDataSource(FileUtils fileUtilInstance) {
+    public ImageLocalDataSource(FileUtils fileUtilInstance) {
         mFileUtilsInstance = fileUtilInstance;
-    }
-
-    public static ImageLocalDataSource getInstance(FileUtils fileUtilInstance) {
-        if (sInstance == null) {
-            sInstance = new ImageLocalDataSource(fileUtilInstance);
-        }
-        return sInstance;
     }
 
     @Override

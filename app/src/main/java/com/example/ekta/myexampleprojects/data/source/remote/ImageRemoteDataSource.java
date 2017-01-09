@@ -31,6 +31,8 @@ import static com.example.ekta.myexampleprojects.utils.FileUtils.StorageType.EXT
 /**
  * Implementation of the data source from network.
  */
+
+
 public class ImageRemoteDataSource implements ImageDataSource {
 
     private static final String TAG = ImageRemoteDataSource.class.getSimpleName();
@@ -38,18 +40,9 @@ public class ImageRemoteDataSource implements ImageDataSource {
     private FileUtils sFileUtilInstance;
     private RequestManager mGlideRequestManager;
 
-    // Prevent direct instantiation.
-    private ImageRemoteDataSource(FileUtils fileUtilInstance, RequestManager glideRequestManager) {
+    public ImageRemoteDataSource(FileUtils fileUtilInstance, RequestManager glideRequestManager) {
         sFileUtilInstance = fileUtilInstance;
         mGlideRequestManager = glideRequestManager;
-    }
-
-    public static ImageRemoteDataSource getInstance(FileUtils fileUtilInstance, RequestManager
-            glideRequestManager) {
-        if (sInstance == null) {
-            sInstance = new ImageRemoteDataSource(fileUtilInstance, glideRequestManager);
-        }
-        return sInstance;
     }
 
     @Override

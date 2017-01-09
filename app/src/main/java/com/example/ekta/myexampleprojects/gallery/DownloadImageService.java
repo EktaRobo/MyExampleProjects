@@ -10,10 +10,12 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.example.ekta.myexampleprojects.R;
-import com.example.ekta.myexampleprojects.application.AppWideApplication;
+import com.example.ekta.myexampleprojects.application.App;
 import com.example.ekta.myexampleprojects.constant.Constants;
 import com.example.ekta.myexampleprojects.data.DownloadedImage;
 import com.example.ekta.myexampleprojects.manager.NotificationListenerManager;
+
+import javax.inject.Inject;
 
 /**
  * Created by ekta on 14/12/16.
@@ -21,9 +23,10 @@ import com.example.ekta.myexampleprojects.manager.NotificationListenerManager;
 
 public class DownloadImageService extends Service implements GalleryContract.View {
     private static final String TAG = DownloadImageService.class.getSimpleName();
+    @Inject
+    GalleryContract.Presenter mPresenter;
     private NotificationManager mNotifyManager;
     private NotificationCompat.Builder mBuilder;
-    private GalleryContract.Presenter mPresenter;
 
     public DownloadImageService() {
         super();
@@ -33,8 +36,12 @@ public class DownloadImageService extends Service implements GalleryContract.Vie
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "Save service started");
         if (mPresenter == null) {
-            setPresenter(new GalleryPresenter(this, ((AppWideApplication) getApplicationContext()
-            ).getImageRepository()));
+            GalleryComponent galleryComponent = DaggerGalleryComponent.builder()
+                    .galleryViewModule(new
+                    GalleryViewModule
+                    (this)).imageRepositoryComponent((App.getImageRepositoryComponent())).build();
+            galleryComponent.inject(this);
+            setPresenter(mPresenter);
         }
         mPresenter.start();
         return super.onStartCommand(intent, flags, startId);

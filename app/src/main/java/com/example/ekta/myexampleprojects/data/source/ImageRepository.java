@@ -33,43 +33,21 @@ public class ImageRepository implements ImageDataSource {
     private ImageDataSource mTasksLocalDataSource;
 
 
-    private ImageRepository(ImageDataSource tasksRemoteDataSource, ImageDataSource
+    public ImageRepository(ImageDataSource tasksRemoteDataSource, ImageDataSource
             tasksLocalDataSource) {
         mTasksRemoteDataSource = tasksRemoteDataSource;
 
         mTasksLocalDataSource = tasksLocalDataSource;
     }
 
-    public static ImageRepository getInstance(ImageDataSource tasksRemoteDataSource,
-                                              ImageDataSource tasksLocalDataSource) {
-        if (sInstance == null) {
-            sInstance = new ImageRepository(tasksRemoteDataSource, tasksLocalDataSource);
-        }
-        return sInstance;
-    }
-
     /**
-     * Used to force {@link #getInstance(ImageDataSource, ImageDataSource)} to create a new instance
+     * Used to force {@link #ImageRepository(ImageDataSource, ImageDataSource)} to create a new
+     * instance
      * next time it's called.
      */
     public static void destroyInstance() {
         sInstance = null;
     }
-
- /*   @Override
-    public void getImages(final LoadImageCallback loadImageCallback, Context context) {
-        mTasksLocalDataSource.getImage(new LoadImageCallback() {
-            @Override
-            public void onImageLoaded(Bitmap bitmap) {
-                loadImageCallback.onImageLoaded(bitmap);
-            }
-
-            @Override
-            public void onDataNotAvailable() {
-                mTasksRemoteDataSource.getImage(loadImageCallback, );
-            }
-        }, context);
-    }*/
 
     @Override
     public void getImage(final LoadImageCallback loadImageCallback, final int index) {

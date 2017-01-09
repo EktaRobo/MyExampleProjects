@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.util.Log;
 
+import com.example.ekta.myexampleprojects.ApplicationScope;
 import com.example.ekta.myexampleprojects.R;
 
 import java.io.File;
@@ -18,22 +19,15 @@ import java.io.IOException;
  * Created by ekta on 21/12/16.
  */
 
+@ApplicationScope
 public class FileUtils {
     private static final String TAG = FileUtils.class.getSimpleName();
     private static FileUtils sInstance;
     private Context mContext;
 
-    private FileUtils(Context context) {
+    public FileUtils(Context context) {
         mContext = context;
     }
-
-    public static FileUtils getInstance(Context context) {
-        if (sInstance == null) {
-            sInstance = new FileUtils(context);
-        }
-        return sInstance;
-    }
-
 
     /**
      * This is used to store the images in device internal directory path.
