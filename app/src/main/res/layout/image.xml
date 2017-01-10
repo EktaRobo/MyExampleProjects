@@ -1,21 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="wrap_content"
-             android:paddingLeft="4dp"
-             android:paddingRight="4dp"
-             android:paddingTop="8dp"
-             android:src="@android:drawable/stat_sys_download">
 
-    <ImageView android:id="@+id/image_view"
-               xmlns:android="http://schemas.android.com/apk/res/android"
-               android:layout_width="match_parent"
-               android:layout_height="match_parent"
-               android:scaleType="fitXY"
-               android:src="@android:drawable/ic_menu_report_image"/>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+>
+    <data>
+        <import type="android.view.View"/>
 
-    <ProgressBar android:id="@+id/progress_bar"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:layout_gravity="center"/>
-</FrameLayout>
+        <variable name="recyclerViewModel"
+                  type="com.example.ekta.myexampleprojects.viewmodel.RecyclerViewModel"/>
+
+    </data>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:paddingTop="8dp"
+        android:src="@android:drawable/stat_sys_download">
+
+        <ImageView
+            android:id="@+id/image_view"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:src="@android:drawable/ic_menu_report_image"
+            app:setImageBitmap="@{recyclerViewModel}"/>
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="@{recyclerViewModel.loading}"/>
+    </FrameLayout>
+
+</layout>

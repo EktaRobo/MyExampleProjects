@@ -2,7 +2,6 @@ package com.example.ekta.myexampleprojects.gallery;
 
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -52,10 +51,10 @@ public class GalleryFragment extends Fragment implements NotificationListenerMan
 
     private void init() {
         RecyclerView recyclerView = (RecyclerView) mRootView.findViewById(R.id.recycler_view);
-        for (int index = 0; index < Constants.END_POINTS.size(); index++) {
+        /*for (int index = 0; index < Constants.END_POINTS.size(); index++) {
             mBitmaps.add(BitmapFactory.decodeResource(getResources(), android.R.drawable
                     .ic_menu_report_image));
-        }
+        }*/
         mAdapter = new RecyclerAdapter(mBitmaps);
         recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2,
                 StaggeredGridLayoutManager.VERTICAL));
@@ -115,7 +114,6 @@ public class GalleryFragment extends Fragment implements NotificationListenerMan
             if (data != null) {
                 Bitmap bitmap = data.getParcelable(Constants.BITMAP);
                 int index = data.getInt(Constants.INDEX);
-                mBitmaps.remove(index);
                 mBitmaps.add(index, bitmap);
                 mAdapter.notifyDataSetChanged();
             }
